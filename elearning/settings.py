@@ -37,10 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'courses',
     'students',
 ]
-AUTH_USER_MODEL='students.user'
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -127,4 +127,14 @@ STATICFILES_DIRS=[
     os.path.join(BASE_DIR,'elearning','static'),
 ]
 
+
+AUTH_USER_MODEL='students.user'
+
 LOGIN_REDIRECT_URL='/'
+
+rest_framework={
+    'DEFAULT_AUTHENTICATION_CLASSES':(
+    'rest_framework.authentication.BasicAuthentication',
+    'rest_framework.authentication.SessionAuthentication',
+    )
+}
