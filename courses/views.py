@@ -3,31 +3,27 @@ from django.http import HttpResponseRedirect
 from django.db import transaction
 from django.core.exceptions import PermissionDenied,SuspiciousOperation
 from django.core.urlresolvers import reverse
+from django.views.generic import DetailView,CreateView,ListView
+
 from courses.forms import CourseForm
 from courses.models import Course,Section,Question,UserAnswer
 
-def course_detail(request,course_id):
-    course=Course.objects.get(id=course_id)
-    return render(request,'courses/course_detail.html',{'course':course,})
+class CourseDetailView(DetailView):
+    model = Course
+
+course_detail=CourseDetailView.as_view()
 
 
-def course_list(request):
-    #avoid n+1 problems
-    #use prefetct_related or select_related
-    courses=Course.objects.prefetch_related('students')
-    return render(request,'courses/courses_list.html',{'courses':courses,})
+class CourseListView(ListView):
+    model = Course
+    queryset=Course.objects.prefetch_related('students')
+course_list=CourseListView.as_view()
 
+class CourseAddView(CreateView):
+    model = Course
+    fields = '__all__'
+course_add=CourseAddView.as_view()
 
-
-def course_add(request):
-    if request.POST:
-        form = CourseForm(request.POST)
-        if form.is_valid():
-            new_course=form.save()
-            return HttpResponseRedirect(new_course.get_absolute_url())
-    else:
-        form = CourseForm()
-    return render(request,'courses/course_form.html',{'form':form,})
 
 def do_section(request,section_id):
     section =Section.objects.get(id=section_id)
